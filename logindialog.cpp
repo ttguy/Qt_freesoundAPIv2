@@ -2,7 +2,7 @@
 #include "ui_logindialog.h"
 
 #include <QDebug>
-#include <QWebView>
+#include <QtWebEngine/QtWebEngine>
 
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent),
@@ -21,12 +21,12 @@ void LoginDialog::urlChanged(const QUrl &url)
 {
     qDebug() << "URL =" << url;
     QString str = url.toString();
-    int posCode = str.indexOf("&code=");
-    int posErr = str.indexOf("&error=");
+    int posCode = str.indexOf("code=");// urls now do not have % in them
+    int posErr = str.indexOf("error=");
     if(posCode != -1)
     {
 
-        m_strAuthCode =str.mid(posCode+6) ;
+        m_strAuthCode =str.mid(posCode+5) ;
         emit accessTokenObtained();
         QDialog::accept();
 
@@ -34,7 +34,7 @@ void LoginDialog::urlChanged(const QUrl &url)
     if(posErr != -1)
     {
 
-        QString sError =str.mid(posErr+7) ;
+        QString sError =str.mid(posErr+6) ;
         if (sError=="access_denied" )
         {
             emit accessDenied();
